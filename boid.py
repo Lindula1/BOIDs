@@ -39,13 +39,25 @@ class Boid:
     def frame_updates(self):
         raise NotImplementedError
 
-    def update_position(self, frame_rate : float):
+    def update_position(self, frame_rate : float) -> bool:
         if len(self.velocity_vector) != len(self.pixel_position):
             raise Exception("HOW?")
-        for i in range(len(self.pixel_position)):
-            velocity = min(self.velocity_vector[i], self.max_speed) if self.velocity_vector[i] > 0 else max(self.velocity_vector[i], -self.max_speed)
-            self.pixel_position[i] = math.ceil(self.pixel_position[i] + velocity * frame_rate)
+
+        vx, vy = self.get_velocity()
+        speed = self.get_abs_velocity()
+        min_speed = self.max_speed**0.5
+
+        if speed == 0:
+            return False
+
+        if speed >= self.max_speed:
+            self.set_velocity((vx / speed)*self.max_speed, (vy/speed)*min_speed)
+        if speed < min_speed:
+            self.set_velocity((vx / speed) * min_speed, (vy / speed) * min_speed)
+        self.set_position(*[math.ceil(self.pixel_position[i] + self.velocity_vector[1-i] * frame_rate) for i in range(len(self.pixel_position))])
         self.frame_updates()
+
+        return True
 
     # Debugging
     def __str__(self):
@@ -96,8 +108,22 @@ class Boid2D(Boid):
     def apply_separation(self, avoid_factor : float):
         vx, vy = self.get_velocity()
         dy, dx = self._close_distance
+        print(dy, dx)
 
-        self.set_velocity((vx+dx)*avoid_factor, vy+dy*avoid_factor)
+        self.set_velocity(vx+dx*avoid_factor, vy+dy*avoid_factor)
+
+    def margin_avoidance(self, turn_factor : float, margin : tuple[int,int,int,int]):
+        top, bottom, left, right = margin
+        y, x = self.get_position()
+        vx, vy = self.get_velocity()
+        if x < left:
+            self.set_velocity(vx + turn_factor, vy)
+        if x > right:
+            self.set_velocity(vx - turn_factor, vy)
+        if y > bottom:
+            self.set_velocity(vx, vy - turn_factor)
+        if y < top:
+            self.set_velocity(vx, vy - turn_factor)
 
     def frame_updates(self):
         self._close_distance = [0 for _ in range(len(self.get_velocity()))]
