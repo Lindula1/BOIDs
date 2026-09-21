@@ -7,14 +7,17 @@ Inspired by:
 https://people.ece.cornell.edu/land/courses/ece4760/labs/s2021/Boids/Boids.html
 """
 import math
+import numpy as np
 
 class Boid:
     def __init__(self, *args : int, **kwargs):
         """
         :param args: pass in x y z etc.. coordinates
         """
+        self.dimension = len(args)
+
         self.pixel_position = list(args)
-        self.velocity_vector = [0 for _ in range(len(args))]
+        self.velocity_vector = [0 for _ in range(self.dimension)]
 
         self.max_speed = kwargs.get("max_speed")
         self.min_speed = kwargs.get("min_speed")
@@ -125,17 +128,12 @@ class Boid2D(Boid):
     def at_safe_distance(self, other: Boid, safe_distance : float, distance_to_other : float) -> bool:
         vector_to_other = [self.get_position()[i] - other.get_position()[i] for i in range(len(self.get_position()))]
 
-        if distance_to_other > safe_distance:
-            return True
-        self._close_distance = [self._close_distance[i] + vector_to_other[i] for i in range(len(self._close_distance))]
-        return False
-
-    def is_neighbouring(self, other : Boid, safe_distance : float, visible_distance : float, distance_to_other : float) -> bool:
-        if safe_distance < distance_to_other < visible_distance:
+        if distance_to_other > safe_distance: # Neighbouring
             self._neighbouring_boids += 1
             self._velocity_avg = [self._velocity_avg[i] + other.get_velocity()[i] for i in range(len(self._velocity_avg))]
             self._position_avg = [self._position_avg[i] + other.get_position()[i] for i in range(len(self._position_avg))]
             return True
+        self._close_distance = [self._close_distance[i] + vector_to_other[i] for i in range(len(self._close_distance))]
         return False
 
     def _average_velocity(self) -> bool:
@@ -156,11 +154,11 @@ class Boid2D(Boid):
         if not self._average_position():
             return None
 
-        px, px = self.get_position()
+        px, py = self.get_position()
         vx, vy = self.get_velocity()
-        (apx, apx) = self._position_avg
+        apx, apy = self._position_avg
 
-        self.set_velocity(vx + (apx- px)*centering_factor, vy + (apx - px)*centering_factor)
+        self.set_velocity(vx + (apx - px)*centering_factor, vy + (apy - py)*centering_factor)
         return None
 
     def apply_alignment(self, matching_factor : float):
@@ -219,6 +217,8 @@ class Boid2D(Boid):
         self._velocity_avg = [0 for _ in range(len(self.get_velocity()))]
         self._position_avg = [0 for _ in range(len(self.get_position()))]
         self._neighbouring_boids = 0
+
+
 
 if __name__ == "__main__":
     test = Boid2D(1, 2)

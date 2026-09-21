@@ -20,8 +20,8 @@ border_adjust = 2
 border = (border_adjust, int(HEIGHT-border_adjust), border_adjust, int(WIDTH-border_adjust))
 
 test_pop = Population(border, 100, frame_rate=1 / 1, fixed_seed=False, safe_distance=4,
-                      turn_factor=0.2, separation=0.05, alignment=0.05, visible_distance=30, max_speed=6, min_speed=2,
-                      cohesion=0.005, rebound_factor=0.1)
+                      turn_factor=0.4, separation=0.05, alignment=0.05, visible_distance=30, max_speed=6, min_speed=2,
+                      cohesion=0.003, rebound_factor=0.9)
 test_pop.load_boids()
 
 while running:

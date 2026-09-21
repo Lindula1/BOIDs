@@ -1,6 +1,6 @@
 import math
 import random
-from boid import Boid2D, Boid
+from boid import Boid2D, Boid, BoidNumpy
 
 def is_tuple_4(iterable) -> bool:
     return isinstance(iterable, tuple) and len(iterable) == 4 and all(isinstance(x, int) and not isinstance(x, bool) for x in iterable)
@@ -84,9 +84,14 @@ class Population:
             for other in self.boid_list:
                 if other is boid:
                     continue
+
                 distance = boid.get_distance(other)
+
+                if distance > self.visible_distance:
+                    continue
+
                 boid.at_safe_distance(other, self.safe_distance, distance)
-                boid.is_neighbouring(other, self.safe_distance, self.visible_distance, distance)
+
             boid.apply_separation(self.separation)
             boid.apply_alignment(self.alignment)
             boid.apply_cohesion(self.cohesion)
