@@ -1,5 +1,6 @@
 import os
 import math
+
 import numpy as np
 
 # ------------------------------------------------------------
@@ -92,6 +93,10 @@ def update_boids(
     separation,
     alignment,
     cohesion,
+
+    separation_random,
+    alignment_random,
+    cohesion_random,
 
     max_speed,
     min_speed,
@@ -204,8 +209,8 @@ def update_boids(
     # Separation
     # --------------------------------------------------------
 
-    vx += close_x * separation
-    vy += close_y * separation
+    vx += close_x * separation * separation_random[i]
+    vy += close_y * separation * separation_random[i]
 
     # --------------------------------------------------------
     # Alignment + cohesion
@@ -223,21 +228,21 @@ def update_boids(
 
         # Alignment
         vx += (
-            average_velocity_x - vx
-        ) * alignment
+                      average_velocity_x - vx
+              ) * alignment * alignment_random[i]
 
         vy += (
-            average_velocity_y - vy
-        ) * alignment
+                      average_velocity_y - vy
+              ) * alignment * alignment_random[i]
 
         # Cohesion
         vx += (
-            average_position_x - x
-        ) * cohesion
+                      average_position_x - x
+              ) * cohesion * cohesion_random[i]
 
         vy += (
-            average_position_y - y
-        ) * cohesion
+                      average_position_y - y
+              ) * cohesion * cohesion_random[i]
 
     # --------------------------------------------------------
     # Margin avoidance
@@ -454,6 +459,24 @@ class GPUPopulation:
             population_size
         )
 
+        separation_random = rng.uniform(
+            0.0,
+            5.0,
+            population_size
+        ).astype(np.float32)
+
+        alignment_random = rng.uniform(
+            0.0,
+            5.0,
+            population_size
+        ).astype(np.float32)
+
+        cohesion_random = rng.uniform(
+            0.0,
+            5.0,
+            population_size
+        ).astype(np.float32)
+
         # Random initial directions.
         angles = rng.uniform(
             0.0,
@@ -476,6 +499,18 @@ class GPUPopulation:
 
         self.positions = cuda.to_device(positions)
         self.velocities = cuda.to_device(velocities)
+
+        self.separation_random = cuda.to_device(
+            separation_random
+        )
+
+        self.alignment_random = cuda.to_device(
+            alignment_random
+        )
+
+        self.cohesion_random = cuda.to_device(
+            cohesion_random
+        )
 
         # Double buffers.
         self.new_positions = cuda.device_array_like(
@@ -545,6 +580,10 @@ class GPUPopulation:
             self.separation,
             self.alignment,
             self.cohesion,
+
+            self.separation_random,
+            self.alignment_random,
+            self.cohesion_random,
 
             self.max_speed,
             self.min_speed,

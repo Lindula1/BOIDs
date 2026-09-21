@@ -9,8 +9,8 @@ from gpu_optimised import GPUPopulation
 
 pygame.init()
 
-WIDTH = 300
-HEIGHT = 300
+WIDTH = 1280
+HEIGHT = 720
 
 screen = pygame.display.set_mode(
     (WIDTH, HEIGHT)
@@ -30,7 +30,7 @@ pixels = pygame.surfarray.pixels3d(screen)
 # Simulation parameters
 # ------------------------------------------------------------
 
-boid_size = 2
+boid_size = 5
 
 border_adjust = 2
 
@@ -58,15 +58,15 @@ margin = (
 test_pop = GPUPopulation(
     border=border,
 
-    population_size=200,
+    population_size=5000,
 
     margin=margin,
 
-    frame_rate=1.0,
+    frame_rate=0.8,
 
-    safe_distance=4.0,
+    safe_distance=7.0,
 
-    turn_factor=0.4,
+    turn_factor=0.3,
 
     separation=0.05,
 
@@ -74,11 +74,11 @@ test_pop = GPUPopulation(
 
     visible_distance=30.0,
 
-    max_speed=6.0,
+    max_speed=3.0,
 
     min_speed=2.0,
 
-    cohesion=0.003,
+    cohesion=0.005,
 
     rebound_factor=0.9,
 )
