@@ -1,6 +1,6 @@
 import math
 import random
-from boid import Boid2D, Boid, BoidNumpy
+from boid import Boid2D, Boid
 
 def is_tuple_4(iterable) -> bool:
     return isinstance(iterable, tuple) and len(iterable) == 4 and all(isinstance(x, int) and not isinstance(x, bool) for x in iterable)

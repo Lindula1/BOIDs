@@ -95,17 +95,8 @@ class Boid2D(Boid):
         return self.velocity_vector
 
     def get_distance(self, other : Boid) -> float:
-<<<<<<< Updated upstream
-        r_1, theta_1 = self.get_position(False)
-        r_2, theta_2 = other.get_position(False)
-<<<<<<< Updated upstream
-        return abs((r_1**2+r_2**2-2*r_1*r_2*math.cos(theta_2-theta_1))**0.5)
-=======
-        return (r_1**2+r_2**2-2*r_1*r_2*math.cos(theta_2-theta_1))**0.5
-=======
         return sum([(self.get_position()[i] - other.get_position()[i])**2 for i in range(len(self.get_position()))])**0.5
->>>>>>> Stashed changes
->>>>>>> Stashed changes
+
 
     def at_safe_distance(self, other: Boid, safe_distance : float, distance_to_other : float) -> bool:
         vector_to_other = [self.get_position()[i] - other.get_position()[i] for i in range(len(self.get_position()))]
