@@ -5,7 +5,6 @@ from boid import Boid2D, Boid, BoidNumpy
 def is_tuple_4(iterable) -> bool:
     return isinstance(iterable, tuple) and len(iterable) == 4 and all(isinstance(x, int) and not isinstance(x, bool) for x in iterable)
 
-
 class Population:
     def __init__(self, border : tuple[int, int, int, int], boid_count : int, **kwargs):
         """

@@ -25,17 +25,13 @@ class Boid:
     def set_position(self, *args : int):
         self.pixel_position[0 : len(args)-1] = args
 
-    def get_position(self, *args) -> list[int] | list[float]:
+    def get_position(self) -> list[int]:
         return self.pixel_position
 
     def set_velocity(self, *args : float, **kwargs):
         raise NotImplementedError
 
-    def get_velocity(self, **kwargs) -> list[float]:
-        """
-        :param kwargs:
-        :return: pixels per frame
-        """
+    def get_velocity(self) -> list[float]:
         raise NotImplementedError
 
     def get_abs_velocity(self):
@@ -81,13 +77,7 @@ class Boid2D(Boid):
         self._neighbouring_boids = 0
         self._position_avg = [0 for _ in range(len(self.get_position()))]
 
-    def get_position(self, cartesian = True) -> list[int] | list[float]:
-        if not cartesian:
-            x, y = self.pixel_position
-            if x == 0:
-                return [(x**2 + y**2)**0.5, float(math.pi/2)]
-            return [(x**2 + y**2)**0.5, float(math.atan(y / x))]
-
+    def get_position(self) -> list[int]:
         return self.pixel_position
 
     def set_position(self, x : int, y : int):
@@ -98,32 +88,24 @@ class Boid2D(Boid):
         """
         self.pixel_position = [x, y]
 
-    def set_velocity(self, *args, cartesian : bool = True):
-        """
-        :param args: velocity passed in as r & theta (radians) or vx and vy IN ORDER
-        :param cartesian:
-        :return: None
-        """
-        if cartesian:
-            velocity = [args[0], args[1]]
-        else:
-            velocity = [args[0]*math.cos(args[1]), args[0]*math.sin(args[1])]
+    def set_velocity(self, x : float, y : float):
+        self.velocity_vector = [x, y]
 
-        self.velocity_vector = velocity
-
-    def get_velocity(self, cartesian : bool = True) -> list[float]:
-        if not cartesian:
-            x, y = self.velocity_vector
-            if x == 0:
-                return [self.get_abs_velocity(), float(math.pi/2)]
-            return [self.get_abs_velocity(), float(math.atan(y/x))]
-
+    def get_velocity(self) -> list[float]:
         return self.velocity_vector
 
     def get_distance(self, other : Boid) -> float:
+<<<<<<< Updated upstream
         r_1, theta_1 = self.get_position(False)
         r_2, theta_2 = other.get_position(False)
+<<<<<<< Updated upstream
         return abs((r_1**2+r_2**2-2*r_1*r_2*math.cos(theta_2-theta_1))**0.5)
+=======
+        return (r_1**2+r_2**2-2*r_1*r_2*math.cos(theta_2-theta_1))**0.5
+=======
+        return sum([(self.get_position()[i] - other.get_position()[i])**2 for i in range(len(self.get_position()))])**0.5
+>>>>>>> Stashed changes
+>>>>>>> Stashed changes
 
     def at_safe_distance(self, other: Boid, safe_distance : float, distance_to_other : float) -> bool:
         vector_to_other = [self.get_position()[i] - other.get_position()[i] for i in range(len(self.get_position()))]
