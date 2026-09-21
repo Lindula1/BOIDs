@@ -21,9 +21,7 @@ class Population:
         self.positions = np.empty((boid_count, 2), dtype=int_dtype)
         self.velocities = np.empty((boid_count, 2), dtype=float_dtype)
 
-        self.separation_randoms = np.ones(boid_count, dtype=float_dtype)
         self.alignment_randoms = np.ones(boid_count, dtype=float_dtype)
-        self.cohesion_randoms = np.ones(boid_count, dtype=float_dtype)
 
         self._inst_values(random_boid_natures)
 
@@ -35,9 +33,7 @@ class Population:
         self.velocities[:, 1] = rng.uniform(-self.min_speed, self.min_speed, self.boid_count)
 
         if randomise:
-            self.separation_randoms[:] = rng.uniform(size=self.boid_count)
-            self.alignment_randoms[:] = rng.uniform(size=self.boid_count)
-            self.cohesion_randoms[:] = rng.uniform(size=self.boid_count)
+            self.alignment_randoms[:] = rng.uniform(0.9, 1.1, size=self.boid_count)
 
     def _inst_border(self, border):
         self.border = border
@@ -50,9 +46,9 @@ class Population:
             raise Exception("Inappropriate bounding box size.\n[-value,+value] where +value and -value cannot be 0 and abs(+value) or abs(-value) greater than 50")
 
     def bucket_boids(self):
-        for 
+        self.positions = np.sort(self.positions)
 
-    def next_frame(self, separation : float, alignment : float, cohesion : float, safe_distance : float, visible_distance : float, turn_factor : float, rebound_factor : float):
+    def next_frame(self, separation : float, alignment : float, cohesion : float, safe_distance : float, visible_distance : float, turn_factor : float, rebound_factor : float, point_x : int, point_y : int, point_factor : float):
         old_positions = self.positions.copy()
         old_velocities = self.velocities.copy()
         for boid_id in range(self.positions.shape[0]):
@@ -72,15 +68,16 @@ class Population:
                 dx, dy = bx - ox, by - oy
                 squared_distance = dx**2 + dy**2
 
-                if squared_distance >= visible_distance**2:
+                if squared_distance > visible_distance**2:
                     continue
+
 
                 ovx, ovy = old_velocities[other_id]
 
                 if squared_distance < safe_distance**2:
                     close_dx += dx
                     close_dy += dy
-                elif safe_distance**2 < squared_distance < visible_distance**2:
+                else:
                     x_pos_avg += ox
                     y_pos_avg += oy
                     x_vel_avg += ovx
@@ -94,11 +91,11 @@ class Population:
                 x_vel_avg /= neighboring_boids
                 y_vel_avg /= neighboring_boids
 
-                bvx = bvx + (x_pos_avg - bx) * cohesion * self.cohesion_randoms[boid_id] + (x_vel_avg - bvx) * alignment * self.alignment_randoms[boid_id]
-                bvy = bvy + (y_pos_avg - by) * cohesion * self.cohesion_randoms[boid_id] + (y_vel_avg - bvy) * alignment * self.alignment_randoms[boid_id]
+                bvx = bvx + (x_pos_avg - bx) * cohesion + (x_vel_avg - bvx) * alignment * self.alignment_randoms[boid_id]
+                bvy = bvy + (y_pos_avg - by) * cohesion + (y_vel_avg - bvy) * alignment * self.alignment_randoms[boid_id]
 
-            bvx += close_dx * separation * self.separation_randoms[boid_id]
-            bvy += close_dy * separation * self.separation_randoms[boid_id]
+            bvx += close_dx * separation
+            bvy += close_dy * separation
 
             bottom, top, left, right = self.border
             if bx < left + self.margin_offset:
@@ -125,6 +122,13 @@ class Population:
 
             speed = np.sqrt(bvx ** 2 + bvy ** 2, dtype=float_dtype)
 
+            px = bx - point_x
+            py = by - point_y
+
+            if (px**2 + py**2) < visible_distance**2:
+                bvx += px * point_factor
+                bvy += py * point_factor
+
             if speed < self.min_speed:
                 bvx = (bvx / speed) * self.min_speed
                 bvy = (bvy / speed) * self.min_speed
@@ -138,7 +142,6 @@ class Population:
 
     def get_positions(self):
         return self.positions
-
 
 if __name__ == "__main__":
     test_pop = Population((0,200,0,200),50,20, random_boid_natures=True)
