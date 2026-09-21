@@ -201,6 +201,88 @@ class Boid2D(Boid):
         self._position_avg = [0 for _ in range(len(self.get_position()))]
         self._neighbouring_boids = 0
 
+class BoidNumpy(Boid2D):
+    def __init__(self, x : int, y : int, max_speed : float, min_speed : float):
+        super().__init__(x, y, max_speed=max_speed, min_speed=min_speed)
+        # Separation parameters
+        self._float_size = np.float64
+        self.pixel_position = np.array([x,y],dtype=np.int16)
+        self.velocity_vector = np.zeros(self.dimension, dtype=self._float_size)
+
+        self._close_distance = np.zeros(self.dimension, dtype=self._float_size)
+        self._velocity_avg = np.zeros(self.dimension, dtype=self._float_size)
+        self._position_avg = np.zeros(self.dimension, dtype=self._float_size)
+        self._neighbouring_boids = 0
+
+
+    def get_position(self, cartesian = True) -> np.ndarray:
+        if not cartesian:
+            x, y = self.pixel_position
+            if x == 0:
+                return np.array([sum(self.pixel_position**2)**0.5, float(math.pi/2)], dtype=self._float_size)
+            return np.array([sum(self.pixel_position**2)**0.5, float(math.atan(y / x))], dtype=self._float_size)
+
+        return self.pixel_position
+
+    def set_position(self, x : int, y : int):
+        """
+        :param x: pixel x location
+        :param y: pixel y location
+        :return:
+        """
+        self.pixel_position[:] = [x,y]
+
+    def set_velocity(self, *args : float, cartesian : bool = True):
+        if cartesian:
+            velocity = [args[0], args[1]]
+        else:
+            velocity = [args[0]*math.cos(args[1]), args[0]*math.sin(args[1])]
+
+        self.velocity_vector[:] = velocity
+
+    def get_abs_velocity(self):
+        return sum(self.velocity_vector**2)**0.5
+
+    def get_velocity(self, cartesian : bool = True):
+        if not cartesian:
+            x, y = self.velocity_vector
+            if x == 0:
+                return np.array([self.get_abs_velocity(), float(math.pi/2)], dtype=self._float_size)
+            return np.array([self.get_abs_velocity(), float(math.atan(y/x))], dtype=self._float_size)
+
+        return self.velocity_vector
+
+    def at_safe_distance(self, other: Boid, safe_distance : float, distance_to_other : float) -> bool:
+        vector_to_other = self.get_position() - other.get_position()
+
+        if distance_to_other > safe_distance: # Neighbouring
+            self._neighbouring_boids += 1
+            self._velocity_avg += other.get_velocity()
+            self._position_avg += other.get_position()
+            return True
+        self._close_distance += vector_to_other
+        return False
+
+    def _average_velocity(self) -> bool:
+        if self._neighbouring_boids < 1:
+            return False
+
+        self._velocity_avg = self._velocity_avg / self._neighbouring_boids
+        return True
+
+    def _average_position(self) -> bool:
+        if self._neighbouring_boids < 1:
+            return False
+
+        self._position_avg = self._position_avg / self._neighbouring_boids
+        return True
+
+    def frame_updates(self):
+        self._close_distance = np.zeros(self.dimension, dtype=self._float_size)
+        self._velocity_avg = np.zeros(self.dimension, dtype=self._float_size)
+        self._position_avg = np.zeros(self.dimension, dtype=self._float_size)
+        self._neighbouring_boids = 0
+
 if __name__ == "__main__":
     test = Boid2D(1, 2)
     test.set_velocity(23.5, 13.5)
