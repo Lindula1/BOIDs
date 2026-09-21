@@ -37,7 +37,8 @@ class Population:
 
         self.safe_distance = max([abs(i) for i in border])*0.10 if kwargs.get("safe_distance") is None else kwargs.get("safe_distance")
         self.visible_distance = max([abs(i) for i in border])*0.10 if kwargs.get("visible_distance") is None else kwargs.get("visible_distance")
-        self.turn_factor = 2 if kwargs.get("turn_factor") is None else kwargs.get("turn_factor")
+        self.turn_factor = 0.2 if kwargs.get("turn_factor") is None else kwargs.get("turn_factor")
+        self.rebound_factor = 0.7 if kwargs.get("rebound_factor") is None else kwargs.get("rebound_factor")
 
         self.boid_list = None
 
@@ -90,6 +91,7 @@ class Population:
             boid.apply_alignment(self.alignment)
             boid.apply_cohesion(self.cohesion)
             boid.margin_avoidance(self.turn_factor, self.margin)
+            boid.border_rebound(self.rebound_factor, self.border)
             boid.update_position(self.frame_rate)
 
     def get_positions(self, row_major : bool = False) -> tuple[list[int], list[int]] | list[list[int]]:

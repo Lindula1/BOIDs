@@ -53,7 +53,7 @@ class Boid:
             return False
 
         if speed >= self.max_speed:
-            self.set_velocity((vx / speed)*self.max_speed, (vy / speed)*self.min_speed)
+            self.set_velocity((vx / speed) * self.min_speed, (vy / speed) * self.min_speed)
         if speed < self.min_speed:
             self.set_velocity((vx / speed) * self.min_speed, (vy / speed) * self.min_speed)
 
@@ -67,6 +67,8 @@ class Boid:
     def __str__(self):
         return f"Pos : {self.get_position()}, Velocity : {self.get_abs_velocity() : .3f}"
 
+
+# noinspection DuplicatedCode
 class Boid2D(Boid):
     def __init__(self, x : int, y : int, max_speed : float, min_speed : float):
         super().__init__(x, y, max_speed=max_speed, min_speed=min_speed)
@@ -118,7 +120,7 @@ class Boid2D(Boid):
     def get_distance(self, other : Boid) -> float:
         r_1, theta_1 = self.get_position(False)
         r_2, theta_2 = other.get_position(False)
-        return (r_1**2+r_2**2-2*r_1*r_2*math.cos(theta_2-theta_1))**0.5
+        return abs((r_1**2+r_2**2-2*r_1*r_2*math.cos(theta_2-theta_1))**0.5)
 
     def at_safe_distance(self, other: Boid, safe_distance : float, distance_to_other : float) -> bool:
         vector_to_other = [self.get_position()[i] - other.get_position()[i] for i in range(len(self.get_position()))]
@@ -194,6 +196,23 @@ class Boid2D(Boid):
             self.set_velocity(vx, vy - turn_factor)
         if y < top:
             self.set_velocity(vx, vy + turn_factor)
+
+    def border_rebound(self, rebound_factor : float, border : tuple[int,int,int,int]):
+        top, bottom, left, right = border
+        x, y = self.get_position()
+        vx, vy = self.get_velocity()
+        if x < left:
+            self.set_velocity(-vx * rebound_factor, vy)
+            self.set_position(left+1, y)
+        if x > right:
+            self.set_velocity(-vx * rebound_factor, vy)
+            self.set_position(right-1, y)
+        if y > bottom:
+            self.set_velocity(vx, -vy * rebound_factor)
+            self.set_position(x, bottom-1)
+        if y < top:
+            self.set_velocity(vx, -vy * rebound_factor)
+            self.set_position(x, top+1)
 
     def frame_updates(self):
         self._close_distance = [0 for _ in range(len(self.get_velocity()))]

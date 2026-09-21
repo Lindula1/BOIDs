@@ -3,7 +3,7 @@ from boid_model import Population
 
 pygame.init()
 
-WIDTH, HEIGHT = 200, 200
+WIDTH, HEIGHT = 300, 300
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("BOID Example")
 
@@ -16,9 +16,12 @@ frame = 0
 
 boid_size = 2
 
-test_pop = Population((0, HEIGHT, 0, WIDTH), 100, frame_rate=1 / 1, fixed_seed=True, safe_distance=2,
-                      turn_factor=0.2, separation=0.05, alignment=0.05, visible_distance=20, max_speed=3, min_speed=2,
-                      cohesion=0.005)
+border_adjust = 2
+border = (border_adjust, int(HEIGHT-border_adjust), border_adjust, int(WIDTH-border_adjust))
+
+test_pop = Population(border, 100, frame_rate=1 / 1, fixed_seed=False, safe_distance=4,
+                      turn_factor=0.2, separation=0.05, alignment=0.05, visible_distance=30, max_speed=6, min_speed=2,
+                      cohesion=0.005, rebound_factor=0.1)
 test_pop.load_boids()
 
 while running:
