@@ -185,6 +185,16 @@ class Boid2D(Boid):
             self.set_velocity(vx, -vy * rebound_factor)
             self.set_position(x, top+1)
 
+    def point_repel(self, point_x : int, point_y : int, visible_distance : float, repel_factor : float):
+        x, y = self.get_position()
+        if ((x - point_x)**2 + (y-point_y)**2)**0.5 > visible_distance:
+            return None
+
+        vx, vy = self.get_velocity()
+        velocity_from_point = [vx + (x - point_x)*repel_factor, vy +(y - point_y)*repel_factor]
+        self.set_velocity(*velocity_from_point)
+        return None
+
     def frame_updates(self):
         self._close_distance = [0 for _ in range(len(self.get_velocity()))]
         self._velocity_avg = [0 for _ in range(len(self.get_velocity()))]

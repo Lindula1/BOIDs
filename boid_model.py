@@ -78,7 +78,7 @@ class Population:
             self.boid_list.append(Boid2D(*starting_positions[i], max_speed=self.max_speed, min_speed=self.min_speed))
             self.boid_list[i].set_velocity(*[random.random()*self.max_speed*-1**random.randint(0,1) for i in range(len(starting_positions[i]))])
 
-    def next_frame(self) -> None:
+    def next_frame(self, mouse_x : int, mouse_y : int, repel_factor : float) -> None:
         for boid in self.boid_list:
             for other in self.boid_list:
                 if other is boid:
@@ -94,6 +94,7 @@ class Population:
             boid.apply_separation(self.separation)
             boid.apply_alignment(self.alignment)
             boid.apply_cohesion(self.cohesion)
+            boid.point_repel(mouse_x, mouse_y, self.visible_distance, repel_factor)
             boid.margin_avoidance(self.turn_factor, self.margin)
             boid.border_rebound(self.rebound_factor, self.border)
             boid.update_position(self.frame_rate)

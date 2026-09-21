@@ -19,8 +19,8 @@ boid_size = 2
 border_adjust = 2
 border = (border_adjust, int(HEIGHT-border_adjust), border_adjust, int(WIDTH-border_adjust))
 
-test_pop = Population(border, 120, frame_rate=1 / 1, fixed_seed=False, safe_distance=4,
-                      turn_factor=0.4, separation=0.05, alignment=0.05, visible_distance=30, max_speed=6, min_speed=2,
+test_pop = Population(border, 100, frame_rate=1 / 1, fixed_seed=False, safe_distance=5,
+                      turn_factor=0.4, separation=0.05, alignment=0.05, visible_distance=30, max_speed=4, min_speed=2,
                       cohesion=0.003, rebound_factor=0.9)
 test_pop.load_boids()
 
@@ -40,7 +40,9 @@ while running:
 
     pygame.display.flip()
 
-    test_pop.next_frame()
+    mouse_x, mouse_y = pygame.mouse.get_pos()
+
+    test_pop.next_frame(mouse_x, mouse_y, 0.05)
 
     frame += 1
     clock.tick(120)
