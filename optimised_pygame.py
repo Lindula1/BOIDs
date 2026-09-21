@@ -15,7 +15,7 @@ pixels = pygame.surfarray.pixels3d(screen)
 running = True
 frame = 0
 
-boid_size = 4
+boid_size = 3
 
 border_adjust = 2
 border = (border_adjust, int(HEIGHT-border_adjust), border_adjust, int(WIDTH-border_adjust))
@@ -57,7 +57,7 @@ while running:
     elif right_held:
         point_sign = 2
 
-    test_pop.next_frame(0.07,0.08,0.0005,boid_size + 1.0,30.0,0.1, 0.9, mouse_x, mouse_y, 0.60, point_sign)
+    test_pop.next_frame(0.07,0.08,0.0005,boid_size + 1.0,30.0,0.2, 0.9, mouse_x, mouse_y, 0.60, point_sign)
 
     frame += 1
     clock.tick(120)

@@ -205,7 +205,6 @@ def boid_kernel(old_positions, old_velocities, positions, velocities, alignment_
             px = bx - point_x
             py = by - point_y
 
-
         point_distance_sq = px * px + py * py
 
         if point_distance_sq < visible_distance_sq*5:
@@ -215,8 +214,8 @@ def boid_kernel(old_positions, old_velocities, positions, velocities, alignment_
     cx = (right - left) / 2 - bx
     cy = (top - bottom) / 2 - by
 
-    bvx += cx * 0.00002
-    bvy += cy * 0.00003
+    bvx += cx * 0.00008
+    bvy += cy * 0.00004
 
     speed = (bvx**2 + bvy**2) ** 0.5
 
