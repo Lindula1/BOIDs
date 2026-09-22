@@ -207,12 +207,13 @@ def boid_kernel(old_positions, old_velocities, positions, velocities, alignment_
 
         point_distance_sq = px * px + py * py
 
-        if point_distance_sq < visible_distance_sq*5:
+        if point_distance_sq < visible_distance_sq*15:
             bvx += px * point_factor
             bvy += py * point_factor
 
     cx = (right - left) / 2 - bx
     cy = (top - bottom) / 2 - by
+    # cy = top - by
 
     bvx += cx * 0.00008
     bvy += cy * 0.00004
@@ -284,7 +285,7 @@ class Population:
         self.velocities[:, 1] = rng.uniform(-self.min_speed, self.min_speed, self.boid_count)
 
         if randomise:
-            self.alignment_randoms[:] = rng.uniform(0.9, 1.1, size=self.boid_count)
+            self.alignment_randoms[:] = rng.uniform(0.6, 1.1, size=self.boid_count)
 
     def _inst_border(self, border):
 
