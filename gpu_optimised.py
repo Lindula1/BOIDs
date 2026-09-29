@@ -127,6 +127,11 @@ def boid_kernel(old_positions, old_velocities, positions, velocities, alignment_
         if other_id == boid_id:
             continue
 
+        # if not boid_id / 2 < other_id < boid_id:
+        #     # close_dx /= separation
+        #     # close_dy /= separation
+        #     continue
+
         ox = old_positions[other_id, 0]
         oy = old_positions[other_id, 1]
 
@@ -145,7 +150,7 @@ def boid_kernel(old_positions, old_velocities, positions, velocities, alignment_
             close_dx += dx
             close_dy += dy
 
-        else:
+        if squared_distance > safe_distance_sq:
             x_pos_avg += ox
             y_pos_avg += oy
 
@@ -206,6 +211,11 @@ def boid_kernel(old_positions, old_velocities, positions, velocities, alignment_
             py = by - point_y
 
         point_distance_sq = px * px + py * py
+        # pxs, pys = px * px, py * py
+
+        # if pxs < visible_distance_sq*15 and (point_distance_sq / pys) < visible_distance*15:
+        #     bvx += px * point_factor
+        #     bvy += py * point_factor
 
         if point_distance_sq < visible_distance_sq*15:
             bvx += px * point_factor
@@ -215,8 +225,8 @@ def boid_kernel(old_positions, old_velocities, positions, velocities, alignment_
     cy = (top - bottom) / 2 - by
     # cy = top - by
 
-    bvx += cx * 0.00008
-    bvy += cy * 0.00004
+    bvx += cx * 0.04008
+    bvy += cy * 0.04004
 
     speed = (bvx**2 + bvy**2) ** 0.5
 

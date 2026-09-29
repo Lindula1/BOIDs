@@ -15,14 +15,14 @@ pixels = pygame.surfarray.pixels3d(screen)
 running = True
 frame = 0
 
-boid_size = 1
+boid_size = 2
 
 border_adjust = 2
 border = (border_adjust, int(HEIGHT-border_adjust), border_adjust, int(WIDTH-border_adjust))
 
 max_speed = 5
 
-test_pop = Population(border, 50, 14000, random_boid_natures=True, min_speed=3, max_speed=max_speed)
+test_pop = Population(border, 50, 5000, random_boid_natures=True, min_speed=3, max_speed=max_speed)
 
 while running:
     for event in pygame.event.get():
@@ -45,6 +45,7 @@ while running:
         pixels[left_range_1:left_range_2, right_range_1:right_range_2] = [255,0,0]
 
 
+
     pygame.display.flip()
 
     mouse_x, mouse_y = pygame.mouse.get_pos()
@@ -59,7 +60,7 @@ while running:
     elif right_held:
         point_sign = 2
 
-    test_pop.next_frame(0.12,0.08,0.0005, boid_size + 2.0,20.0,0.4, 0.7, mouse_x, mouse_y, 0.07, point_sign)
+    test_pop.next_frame(0.12,0.08,0.0008, boid_size + 2.0,35.0,0.4, 0.7, mouse_x, mouse_y, 0.07, point_sign)
 
     frame += 1
     clock.tick(120)
