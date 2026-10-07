@@ -149,9 +149,12 @@ class Population:
                 px = bx - point_x
                 py = by - point_y
 
-                if (px**2 + py**2) < visible_distance**2*5:
+                if (px**2 + py**2) < visible_distance**2*3:
                     bvx += px * point_factor
                     bvy += py * point_factor
+
+                bvx += (right / 2 - bx) * 0.0002
+                bvy += (top / 2 - by) * 0.0002
 
                 if speed < self.min_speed:
                     bvx = (bvx / speed) * self.min_speed

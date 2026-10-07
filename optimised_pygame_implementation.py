@@ -29,16 +29,16 @@ border_adjust = 2
 border = (border_adjust, int(HEIGHT-border_adjust), border_adjust, int(WIDTH-border_adjust))
 
 separation = 0.05
-alignment = 0.07
-cohesion = 0.002
-safe_distance = boid_size + 1
+alignment = 0.1
+cohesion = 0.02
+safe_distance = boid_size + 4
 visible_distance = boid_size * 12
-turn_factor = 0.4
+turn_factor = 0.2
 rebound_factor = 0.7
-min_speed = 3
-max_speed = 4
+min_speed = 2
+max_speed = 3
 
-test_pop = Population(border, 50, 1000, min_speed, max_speed)
+test_pop = Population(border, 50, 500, min_speed, max_speed)
 
 while running:
     for event in pygame.event.get():
