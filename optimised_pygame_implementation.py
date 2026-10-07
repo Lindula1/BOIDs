@@ -1,5 +1,5 @@
 import pygame
-from gpu_optimised_pygame import Population
+from optimised_boid_model import Population
 
 pygame.init()
 
