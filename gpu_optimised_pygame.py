@@ -16,7 +16,6 @@ running = True
 frame = 0
 
 boid_size = 2
-
 border_adjust = 2
 border = (border_adjust, int(HEIGHT-border_adjust), border_adjust, int(WIDTH-border_adjust))
 
