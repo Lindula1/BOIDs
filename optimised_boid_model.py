@@ -68,6 +68,8 @@ class Population:
     def next_frame(self, separation : float, alignment : float, cohesion : float, safe_distance : float, visible_distance : float, turn_factor : float, rebound_factor : float, point_x : int, point_y : int, point_factor : float):
         old_positions = self.positions.copy()
         old_velocities = self.velocities.copy()
+        point_x = bucket_dtype(point_x)
+        point_y = bucket_dtype(point_y)
         # for boid_id in range(self.positions.shape[0]):
         buckets = bucket_boids(self._generate_bins())
         # print(buckets.items())
